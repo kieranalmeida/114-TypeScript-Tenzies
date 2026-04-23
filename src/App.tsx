@@ -2,33 +2,41 @@ import { useState, useRef, useEffect } from "react"
 import Die from "./Die"
 import { nanoid } from "nanoid"
 import Confetti from "react-confetti"
+// Imports the JSX type from React
+import type { JSX } from "react"
 
-export default function App() {
-    const [dice, setDice] = useState(() => generateAllNewDice())
-    const buttonRef = useRef(null)
+type Dice = {
+    value: number
+    isHeld: boolean
+    id: string
+}
 
-    const gameWon = dice.every(die => die.isHeld) &&
-        dice.every(die => die.value === dice[0].value)
+export default function App(): JSX.Element {
+    const [dice, setDice] = useState<Dice[]>( (): Dice[] => generateAllNewDice())
+    const buttonRef = useRef<HTMLButtonElement | null>(null)
+
+    const gameWon: boolean = dice.every( (die): boolean => die.isHeld) &&
+        dice.every( (die): boolean => die.value === dice[0].value)
         
-    useEffect(() => {
+    useEffect( (): void => {
         if (gameWon) {
-            buttonRef.current.focus()
+            buttonRef.current?.focus()
         }
     }, [gameWon])
 
-    function generateAllNewDice() {
+    function generateAllNewDice(): Dice[] {
         return new Array(10)
             .fill(0)
-            .map(() => ({
+            .map((): Dice => ({
                 value: Math.ceil(Math.random() * 6),
                 isHeld: false,
                 id: nanoid()
             }))
     }
     
-    function rollDice() {
+    function rollDice(): void {
         if (!gameWon) {
-            setDice(oldDice => oldDice.map(die =>
+            setDice( (oldDice: Dice[]) => oldDice.map( (die: Dice): Dice =>
                 die.isHeld ?
                     die :
                     { ...die, value: Math.ceil(Math.random() * 6) }
@@ -38,15 +46,15 @@ export default function App() {
         }
     }
 
-    function hold(id) {
-        setDice(oldDice => oldDice.map(die =>
+    function hold(id: string): void {
+        setDice( (oldDice: Dice[]): Dice[] => oldDice.map( (die: Dice): Dice =>
             die.id === id ?
                 { ...die, isHeld: !die.isHeld } :
                 die
         ))
     }
 
-    const diceElements = dice.map(dieObj => (
+    const diceElements: JSX.Element[] = dice.map( (dieObj: Dice): JSX.Element => (
         <Die
             key={dieObj.id}
             value={dieObj.value}
@@ -72,3 +80,6 @@ export default function App() {
         </main>
     )
 }
+
+// https://www.typescriptlang.org/docs/handbook/2/objects.html#intersection-types
+// https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys
