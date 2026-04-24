@@ -80,6 +80,3 @@ export default function App(): JSX.Element {
         </main>
     )
 }
-
-// https://www.typescriptlang.org/docs/handbook/2/objects.html#intersection-types
-// https://www.typescriptlang.org/docs/handbook/utility-types.html#picktype-keys
